@@ -14,8 +14,7 @@ import adafruit_sdcard
 import array
 import supervisor
 #############################################################################################################
-#SD card implementation and defenitions
-#do not touch valid pins lol
+#SD card implementation and defenitions Raspberry Pi Pico Gen 1 
 spi = busio.SPI(clock=board.GP10, MOSI=board.GP11, MISO=board.GP12) #define SPI comms on the controller
 cs = digitalio.DigitalInOut(board.GP13) #define Chip Select
 sdcard = adafruit_sdcard.SDCard(spi, cs) #define SD Card using SPI and SC
@@ -23,26 +22,15 @@ vfs = storage.VfsFat(sdcard) #MicroPython implements a Unix-like Virtual File Sy
 storage.mount(vfs, '/sd') #Mounting the VFS
 directory = os.listdir('/sd') #lists all files in directory /sd
 extension = '*.mp3'
-
 #############################################################################################################
 #audio variables and defenitions
 audio = audiopwmio.PWMAudioOut(board.GP15) #Audio out + pin (PWM)  
 #############################################################################################################
 #switch for music switching and definitions
-#will be changed for the magnetic inpyt later!!!!!!!!!!!!!!!!!!!!!!!
 pin = digitalio.DigitalInOut(board.GP0) #Switch PIN (pull up high) open circuit = 1(true or high)
 pin.direction = digitalio.Direction.INPUT
 pin.pull = digitalio.Pull.UP #pulling up the current
 switch = Debouncer(pin) #debouncing the switch
-#############################################################################################################
-#song and its asociated variables
-#song_list = open("/sd/songs.txt", "r")
-#song = song_list.readlines()
-#count = 0 #debuging piece
-#song_playing = ""
-#song_list.close()
-#debug for serial port
-#print (song)
 #############################################################################################################
 #LED controls for debuging
 led = digitalio.DigitalInOut(board.LED)
@@ -53,15 +41,14 @@ led.direction = digitalio.Direction.OUTPUT #Turns on led if boar is working!!
 #            print(line)
 #############################################################################################################
 SongArray = []
-#print (directory)
-#print (SongArray)
-#if filename.endswith
-#music = list(filter(extension, SongArray))
+#print (directory)#debugging code for cheking
+#print (SongArray)#debugging code for cheking
 for filename in directory:
     if "mp3" in filename:
         SongArray.append(filename)
-        print(SongArray) #debugging code for cheking
-        
+        #print(SongArray) #debugging code for cheking
+SongArray.sort()
+#print(SongArray)#debugging code for cheking
 
 while True:
     led.value = True  
@@ -74,10 +61,10 @@ while True:
         #count += 1 #debug code for switch cheking
     for i in SongArray:
         increment+=1
-        print(increment)
+        #print(increment)#debugging code for cheking
         SongNumber = len(SongArray)
-        print(SongNumber)
-        print ("first", pin.value)
+        #print(SongNumber)#debugging code for cheking
+        #print ("first", pin.value)
         if pin.value == True: 
             #print("{}".format(count, line)) # debug code for the switch cheking
             #song_playing = line
@@ -91,42 +78,25 @@ while True:
                     supervisor.reload()
                     break
                 if switch.fell and increment < SongNumber: #if switch does fall it checks the pin state before skipping
-                    print ("switch fell", pin.value)
+                    #print ("switch fell", pin.value)#debugging code for cheking
                     
                     audio.stop() #stops music
                     while not pin.value == True: time.sleep(0.2)#indefinet sleep unless you open the switch again
-                    print ("switch rise", pin.value)
+                    #print ("switch rise", pin.value)#debugging code for cheking
                     
                     break
-
-      
-            
-    print ("we left loop 1 enpty array index")
+       
+    #print ("we left loop 1 enpty array index")#debugging code for cheking
     while pin.value == True:
-        print("you fell asleep listening to music")
+        #print("you fell asleep listening to music")#debugging code for cheking
         
         switch.update()
         if switch.fell:
-            print("switch fell")
+            #print("switch fell")#debugging code for cheking
             while not pin.value == True: time.sleep(0.2)
             time.sleep(1)
             break
         time.sleep(0.5)
-            
-            
                 
-    print("Start from the Top of List Again BB!")    
+    #print("Start from the Top of List Again BB!")#debugging code for cheking  
         
-        
-
-
-
-
-
-
-
-        
-        
-        
-        
-    
